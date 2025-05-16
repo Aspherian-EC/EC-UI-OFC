@@ -832,129 +832,115 @@ end
     end
     
     
---Slider 🟢
+-- Slider 🟢 (estilo neon degradê)
 function tab:AddSlider(sliderData)
     local name = sliderData.Name or "Slider"
     local min = sliderData.Min or 0
     local max = sliderData.Max or 100
     local default = sliderData.Default or 50
+    local color = sliderData.Color or Color3.fromRGB(0, 255, 0)
     local increment = sliderData.Increment or 1
+    local valueName = sliderData.ValueName or "Valor"
     local callback = sliderData.Callback or function() end
 
     local TweenService = game:GetService("TweenService")
+    local UserInputService = game:GetService("UserInputService")
 
-    -- Container principal
     local sliderContainer = Instance.new("Frame")
-    sliderContainer.Size = UDim2.new(1, 0, 0, 50)
-    sliderContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    sliderContainer.LayoutOrder = #self.Container:GetChildren() + 1
+    sliderContainer.Size = UDim2.new(1, 0, 0, 60)
+    sliderContainer.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    sliderContainer.BackgroundTransparency = 0.1
+    sliderContainer.BorderSizePixel = 0
     sliderContainer.Parent = self.Container
+    sliderContainer.LayoutOrder = #self.Container:GetChildren() + 1
 
-    Instance.new("UICorner", sliderContainer).CornerRadius = UDim.new(0, 10)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = sliderContainer
 
-    -- Label
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -80, 0.4, 0)
-    label.Position = UDim2.new(0, 10, 0, 0)
+    label.Size = UDim2.new(1, -60, 0, 20)
+    label.Position = UDim2.new(0, 10, 0, 5)
     label.BackgroundTransparency = 1
     label.Text = name
-    label.TextColor3 = Color3.new(1, 1, 1)
-    label.Font = Enum.Font.Gotham
-    label.TextSize = 15
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 14
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = sliderContainer
 
-    -- Caixa de valor
-    local valueBox = Instance.new("TextLabel")
-    valueBox.Size = UDim2.new(0, 60, 0, 22)
-    valueBox.Position = UDim2.new(1, -70, 0.05, 0)
-    valueBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    valueBox.TextColor3 = Color3.fromRGB(0, 255, 0)
-    valueBox.Text = tostring(default)
-    valueBox.Font = Enum.Font.Code
-    valueBox.TextSize = 14
-    valueBox.TextXAlignment = Enum.TextXAlignment.Center
-    valueBox.Parent = sliderContainer
+    -- Slider Background
+    local sliderBG = Instance.new("Frame")
+    sliderBG.Size = UDim2.new(1, -80, 0, 20)
+    sliderBG.Position = UDim2.new(0, 10, 0, 30)
+    sliderBG.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    sliderBG.BorderSizePixel = 0
+    sliderBG.Parent = sliderContainer
 
-    Instance.new("UICorner", valueBox).CornerRadius = UDim.new(0, 6)
+    local bgCorner = Instance.new("UICorner", sliderBG)
+    bgCorner.CornerRadius = UDim.new(0, 10)
 
-    -- Barra do slider
-    local sliderBar = Instance.new("Frame")
-    sliderBar.Size = UDim2.new(1, -80, 0, 6)
-    sliderBar.Position = UDim2.new(0, 10, 1, -14)
-    sliderBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    sliderBar.BorderSizePixel = 0
-    sliderBar.Parent = sliderContainer
-
-    Instance.new("UICorner", sliderBar).CornerRadius = UDim.new(1, 0)
-
-    -- Barra de preenchimento com degradê
+    -- Preenchimento com degradê
     local fillBar = Instance.new("Frame")
     fillBar.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-    fillBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    fillBar.BackgroundColor3 = color
     fillBar.BorderSizePixel = 0
-    fillBar.Parent = sliderBar
-
-    Instance.new("UICorner", fillBar).CornerRadius = UDim.new(1, 0)
+    fillBar.Parent = sliderBG
 
     local gradient = Instance.new("UIGradient")
     gradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)), -- Neon
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0)) -- Preto
+        ColorSequenceKeypoint.new(0, color),
+        ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))
     }
     gradient.Rotation = 0
     gradient.Parent = fillBar
 
-    -- Bolinha do slider
-    local ball = Instance.new("Frame")
-    ball.Size = UDim2.new(0, 12, 0, 12)
-    ball.Position = UDim2.new((default - min) / (max - min), -6, 0.5, -6)
-    ball.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-    ball.BorderSizePixel = 0
-    ball.AnchorPoint = Vector2.new(0.5, 0.5)
-    ball.Parent = sliderBar
+    local fillCorner = Instance.new("UICorner", fillBar)
+    fillCorner.CornerRadius = UDim.new(0, 10)
 
-    Instance.new("UICorner", ball).CornerRadius = UDim.new(1, 0)
+    -- Valor
+    local valueLabel = Instance.new("TextLabel")
+    valueLabel.Size = UDim2.new(0, 60, 0, 20)
+    valueLabel.Position = UDim2.new(1, -65, 0, 30)
+    valueLabel.BackgroundTransparency = 1
+    valueLabel.TextColor3 = color
+    valueLabel.Text = tostring(default)
+    valueLabel.Font = Enum.Font.Gotham
+    valueLabel.TextSize = 14
+    valueLabel.TextXAlignment = Enum.TextXAlignment.Center
+    valueLabel.Parent = sliderContainer
 
-    -- Atualiza valor
-    local function updateSlider(position)
-        local newValue = math.clamp((position.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X, 0, 1)
-        local scaled = min + newValue * (max - min)
-        local rounded = math.floor(scaled / increment + 0.5) * increment
+    -- Atualização de valor
+    local function updateSlider(inputX)
+        local relX = math.clamp(inputX - sliderBG.AbsolutePosition.X, 0, sliderBG.AbsoluteSize.X)
+        local percent = relX / sliderBG.AbsoluteSize.X
+        local scaledValue = min + percent * (max - min)
+        local rounded = math.floor(scaledValue / increment + 0.5) * increment
+        percent = (rounded - min) / (max - min)
 
-        fillBar.Size = UDim2.new(newValue, 0, 1, 0)
-        ball.Position = UDim2.new(newValue, -6, 0.5, -6)
-        valueBox.Text = tostring(rounded)
-
+        fillBar.Size = UDim2.new(percent, 0, 1, 0)
+        valueLabel.Text = tostring(rounded)
         callback(rounded)
     end
 
-    -- Drag funcional
     local dragging = false
-    local UserInputService = game:GetService("UserInputService")
 
-    ball.InputBegan:Connect(function(input)
+    sliderBG.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
-            updateSlider(input.Position)
+            updateSlider(input.Position.X)
+        end
+    end)
 
-            local conn
-            conn = UserInputService.InputChanged:Connect(function(inputChanged)
-                if dragging and (inputChanged.UserInputType == Enum.UserInputType.MouseMovement or inputChanged.UserInputType == Enum.UserInputType.Touch) then
-                    updateSlider(inputChanged.Position)
-                end
-            end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            updateSlider(input.Position.X)
+        end
+    end)
 
-            local function stop()
-                dragging = false
-                if conn then conn:Disconnect() conn = nil end
-            end
-
-            UserInputService.InputEnded:Connect(function(inputEnded)
-                if inputEnded.UserInputType == Enum.UserInputType.MouseButton1 or inputEnded.UserInputType == Enum.UserInputType.Touch then
-                    stop()
-                end
-            end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
         end
     end)
 
