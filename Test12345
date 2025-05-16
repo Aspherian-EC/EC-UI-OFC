@@ -2,14 +2,15 @@ local ElixirLib = {}
 
 -- === CORES DEFINIDAS AQUI PARA FÁCIL MANUTENÇÃO ===
 local Colors = {
-    MainBackgroundStart = Color3.fromRGB(0, 255, 0),      -- Neon verde (início degrade)
-    MainBackgroundEnd = Color3.fromRGB(25, 25, 25),       -- Escuro (fim degrade)
-    Border = Color3.fromRGB(0, 255, 0),                   -- Verde neon da borda
-    TopBarStart = Color3.fromRGB(0, 255, 0),              -- Neon verde topbar (início degrade)
-    TopBarEnd = Color3.fromRGB(30, 30, 30),                -- Escuro topbar (fim degrade)
-    TitleText = Color3.fromRGB(200, 200, 255),             -- Cor do texto do título
-    LeftPanelBackground = Color3.fromRGB(28, 28, 28),      -- Fundo painel esquerdo
-    FloatButtonBackground = Color3.fromRGB(20, 20, 20),    -- Fundo botão flutuante
+    MainBackgroundStart = Color3.fromRGB(0, 255, 0),          -- Neon verde (início degrade)
+    MainBackgroundEnd = Color3.fromRGB(25, 25, 25),           -- Escuro (fim degrade)
+    Border = Color3.fromRGB(0, 255, 0),                       -- Verde neon da borda
+    TopBarStart = Color3.fromRGB(0, 255, 0),                  -- Neon verde topbar (início degrade)
+    TopBarEnd = Color3.fromRGB(30, 30, 30),                   -- Escuro topbar (fim degrade)
+    TitleText = Color3.fromRGB(200, 200, 255),                -- Cor do texto do título
+    LeftPanelGradientStart = Color3.fromRGB(0, 150, 0),       -- Verde mais escuro início degrade left panel
+    LeftPanelGradientEnd = Color3.fromRGB(28, 28, 28),        -- Escuro fim degrade left panel
+    FloatButtonBackground = Color3.fromRGB(20, 20, 20),       -- Fundo botão flutuante
 }
 
 function ElixirLib:MakeWindow(config)
@@ -111,11 +112,20 @@ function ElixirLib:MakeWindow(config)
     -- Painel esquerdo
     local leftPanel = Instance.new("Frame")
     leftPanel.Size = UDim2.new(0, 180, 1, 0)
-    leftPanel.BackgroundColor3 = Colors.LeftPanelBackground
+    leftPanel.BackgroundColor3 = Colors.LeftPanelGradientEnd -- fallback color se degradê não carregar
     leftPanel.Parent = contentFrame
     Instance.new("UICorner", leftPanel).CornerRadius = UDim.new(0, 10)
     local leftStroke = Instance.new("UIStroke", leftPanel)
     leftStroke.Color = Colors.Border
+
+    -- Degrade leftPanel
+    local leftGradient = Instance.new("UIGradient")
+    leftGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Colors.LeftPanelGradientStart),
+        ColorSequenceKeypoint.new(1, Colors.LeftPanelGradientEnd)
+    })
+    leftGradient.Rotation = 90
+    leftGradient.Parent = leftPanel
 
     -- Painel direito (transparente)
     local rightPanel = Instance.new("Frame")
@@ -123,6 +133,7 @@ function ElixirLib:MakeWindow(config)
     rightPanel.Position = UDim2.new(0, 180, 0, 0)
     rightPanel.BackgroundTransparency = 1
     rightPanel.Parent = contentFrame
+
 
     -- Notificação personalizada (via módulo externo)
     local function showNotification(message)
