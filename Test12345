@@ -11,15 +11,7 @@ local Colors = {
     LeftPanelBackground = Color3.fromRGB(28, 28, 28),      -- Fundo painel esquerdo
     FloatButtonBackground = Color3.fromRGB(20, 20, 20),    -- Fundo botão flutuante
     --tabs
-    BackgroundGradientTop = Color3.fromRGB(0, 255, 128),
-    BackgroundGradientBottom = Color3.fromRGB(10, 10, 10),
 
-    ButtonColor = Color3.fromRGB(40, 40, 40),
-    ButtonStroke = Color3.fromRGB(0, 255, 0),
-    TabBackground = Color3.fromRGB(35, 35, 35),
-    SectionBackground = Color3.fromRGB(40, 40, 40),
-    TextColor = Color3.fromRGB(255, 255, 255),
-    TitleColor = Color3.fromRGB(200, 200, 255)
 }
 
 function ElixirLib:MakeWindow(config)
@@ -258,7 +250,18 @@ function ElixirLib:MakeWindow(config)
 
     floatButton.MouseButton1Click:Connect(toggleUI)
 
+    -- 🎨 Cores principais do ElixirLib (neon + escuro)
+local Colors = {
+    BackgroundGradientTop = Color3.fromRGB(0, 255, 128),
+    BackgroundGradientBottom = Color3.fromRGB(10, 10, 10),
 
+    ButtonColor = Color3.fromRGB(40, 40, 40),
+    ButtonStroke = Color3.fromRGB(0, 255, 0),
+    TabBackground = Color3.fromRGB(35, 35, 35),
+    SectionBackground = Color3.fromRGB(40, 40, 40),
+    TextColor = Color3.fromRGB(255, 255, 255),
+    TitleColor = Color3.fromRGB(200, 200, 255)
+}
 
 -- Sistema de Tabs
 local Window = {}
