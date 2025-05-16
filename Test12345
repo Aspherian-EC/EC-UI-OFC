@@ -355,8 +355,7 @@ function Window:MakeTab(tabData)
     end)
 
     table.insert(tabContents, tabContent)
-    table.insert(Tabs, tab)
-   
+ 
 	--Seções🟢
    function tab:AddSection(sectionData)
     local name = sectionData.Name or "Section"
