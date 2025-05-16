@@ -1,9 +1,21 @@
 local ElixirLib = {}
 
+-- === CORES DEFINIDAS AQUI PARA FÁCIL MANUTENÇÃO ===
+local Colors = {
+    MainBackgroundStart = Color3.fromRGB(0, 255, 0),      -- Neon verde (início degrade)
+    MainBackgroundEnd = Color3.fromRGB(25, 25, 25),       -- Escuro (fim degrade)
+    Border = Color3.fromRGB(0, 255, 0),                   -- Verde neon da borda
+    TopBarStart = Color3.fromRGB(0, 255, 0),              -- Neon verde topbar (início degrade)
+    TopBarEnd = Color3.fromRGB(30, 30, 30),                -- Escuro topbar (fim degrade)
+    TitleText = Color3.fromRGB(200, 200, 255),             -- Cor do texto do título
+    LeftPanelBackground = Color3.fromRGB(28, 28, 28),      -- Fundo painel esquerdo
+    FloatButtonBackground = Color3.fromRGB(20, 20, 20),    -- Fundo botão flutuante
+}
+
 function ElixirLib:MakeWindow(config)
     local Window = {}
 
-    -- Referências de serviços
+    -- Serviços
     local Players = game:GetService("Players")
     local UserInputService = game:GetService("UserInputService")
     local player = Players.LocalPlayer
@@ -16,36 +28,62 @@ function ElixirLib:MakeWindow(config)
     screenGui.IgnoreGuiInset = true
     screenGui.Parent = playerGui
 
+    -- Detecta se é mobile para ajustar tamanho inicial
+    local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
+    -- Tamanhos padrão e mobile
+    local defaultSize = UDim2.new(0, 700, 0, 400)
+    local mobileSize = UDim2.new(0, 350, 0, 200)
+
     -- Frame principal
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "MainUIFrame"
-    mainFrame.Size = UDim2.new(0, 700, 0, 400)
-    mainFrame.Position = UDim2.new(0.5, -350, 0.2, 0)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    mainFrame.Size = isMobile and mobileSize or defaultSize
+    mainFrame.Position = UDim2.new(0.5, -mainFrame.Size.X.Offset/2, 0.2, 0)
+    mainFrame.BackgroundColor3 = Colors.MainBackgroundEnd -- fallback degrade
     mainFrame.Parent = screenGui
-
+    mainFrame.ClipsDescendants = true
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
-    Instance.new("UIStroke", mainFrame).Color = Color3.fromRGB(0, 255, 0)
+    local mainStroke = Instance.new("UIStroke", mainFrame)
+    mainStroke.Color = Colors.Border
+
+    -- Degrade fundo principal
+    local mainGradient = Instance.new("UIGradient")
+    mainGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Colors.MainBackgroundStart),
+        ColorSequenceKeypoint.new(1, Colors.MainBackgroundEnd)
+    })
+    mainGradient.Parent = mainFrame
 
     -- TopBar
     local topBar = Instance.new("Frame")
     topBar.Size = UDim2.new(1, 0, 0, 40)
-    topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    topBar.BackgroundColor3 = Colors.TopBarEnd -- fallback degrade
     topBar.BorderSizePixel = 0
     topBar.Parent = mainFrame
     Instance.new("UICorner", topBar).CornerRadius = UDim.new(0, 12)
 
+    -- Degrade topBar
+    local topGradient = Instance.new("UIGradient")
+    topGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Colors.TopBarStart),
+        ColorSequenceKeypoint.new(1, Colors.TopBarEnd)
+    })
+    topGradient.Parent = topBar
+
+    -- Título
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Size = UDim2.new(1, -60, 1, 0)
     titleLabel.Position = UDim2.new(0, 10, 0, 0)
     titleLabel.BackgroundTransparency = 1
     titleLabel.Text = config.Name or "Elixir Client"
-    titleLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+    titleLabel.TextColor3 = Colors.TitleText
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextSize = 20
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.Parent = topBar
 
+    -- Botão minimizar
     local minimizeButton = Instance.new("ImageButton")
     minimizeButton.Size = UDim2.new(0, 30, 0, 30)
     minimizeButton.Position = UDim2.new(1, -40, 0, 5)
@@ -58,7 +96,7 @@ function ElixirLib:MakeWindow(config)
     local divider = Instance.new("Frame")
     divider.Size = UDim2.new(1, -20, 0, 2)
     divider.Position = UDim2.new(0, 10, 0, 40)
-    divider.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    divider.BackgroundColor3 = Colors.Border
     divider.BorderSizePixel = 0
     divider.Parent = mainFrame
     Instance.new("UICorner", divider).CornerRadius = UDim.new(1, 0)
@@ -70,65 +108,47 @@ function ElixirLib:MakeWindow(config)
     contentFrame.BackgroundTransparency = 1
     contentFrame.Parent = mainFrame
 
+    -- Painel esquerdo
     local leftPanel = Instance.new("Frame")
     leftPanel.Size = UDim2.new(0, 180, 1, 0)
-    leftPanel.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    leftPanel.BackgroundColor3 = Colors.LeftPanelBackground
     leftPanel.Parent = contentFrame
     Instance.new("UICorner", leftPanel).CornerRadius = UDim.new(0, 10)
-    Instance.new("UIStroke", leftPanel).Color = Color3.fromRGB(0, 255, 0)
+    local leftStroke = Instance.new("UIStroke", leftPanel)
+    leftStroke.Color = Colors.Border
 
+    -- Painel direito (transparente)
     local rightPanel = Instance.new("Frame")
     rightPanel.Size = UDim2.new(1, -180, 1, 0)
     rightPanel.Position = UDim2.new(0, 180, 0, 0)
     rightPanel.BackgroundTransparency = 1
     rightPanel.Parent = contentFrame
 
-    -- Degradê (verde → preto)
-    local function applyGradient(target)
-        local gradient = Instance.new("UIGradient")
-        gradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-        }
-        gradient.Rotation = 90
-        gradient.Parent = target
-    end
-
-    applyGradient(mainFrame)
-    applyGradient(topBar)
-    applyGradient(leftPanel)
-
-    -- Responsividade mobile
-    local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
-    if isMobile then
-        mainFrame.Size = UDim2.new(0, 450, 0, 300)
-        mainFrame.Position = UDim2.new(0.5, -225, 0.3, 0)
-    end
-
-    -- Notificação personalizada
+    -- Notificação personalizada (via módulo externo)
     local function showNotification(message)
         local notification = loadstring(game:HttpGet('https://raw.githubusercontent.com/9menta/tests/refs/heads/main/notification.lua'))()
         notification({
-            Title = 'Minimized ',
+            Title = 'Minimized',
             Text = message,
             Image = 'rbxassetid://72671288986713',
             Duration = 10
         })
     end
 
+    -- Controle de minimização e notificação só 1 vez
     local isMinimized = false
-    local notifiedOnce = false
+    local notificationShown = false
 
     local function toggleUI()
         isMinimized = not isMinimized
         mainFrame.Visible = not isMinimized
-        floatButton.Visible = isMinimized
-        if isMinimized and not notifiedOnce then
+        if isMinimized and not notificationShown then
             showNotification("Pressione RightShift ou use o botão flutuante para abrir.")
-            notifiedOnce = true
+            notificationShown = true
         end
     end
 
+    -- Hotkey para minimizar (RightShift)
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if not gameProcessed and input.KeyCode == Enum.KeyCode.RightShift then
             toggleUI()
@@ -137,12 +157,14 @@ function ElixirLib:MakeWindow(config)
 
     minimizeButton.MouseButton1Click:Connect(toggleUI)
 
-    -- Drag do frame
+    -- Drag do frame principal
     local draggingMain = false
     local dragInputMain, mousePosMain, framePosMain
+
     local function updateMain(input)
         local delta = input.Position - mousePosMain
-        mainFrame.Position = UDim2.new(framePosMain.X.Scale, framePosMain.X.Offset + delta.X, framePosMain.Y.Scale, framePosMain.Y.Offset + delta.Y)
+        mainFrame.Position = UDim2.new(framePosMain.X.Scale, framePosMain.X.Offset + delta.X,
+            framePosMain.Y.Scale, framePosMain.Y.Offset + delta.Y)
     end
 
     topBar.InputBegan:Connect(function(input)
@@ -151,7 +173,9 @@ function ElixirLib:MakeWindow(config)
             mousePosMain = input.Position
             framePosMain = mainFrame.Position
             input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then draggingMain = false end
+                if input.UserInputState == Enum.UserInputState.End then
+                    draggingMain = false
+                end
             end)
         end
     end)
@@ -168,12 +192,12 @@ function ElixirLib:MakeWindow(config)
         end
     end)
 
-    -- Botão flutuante
+    -- Botão flutuante minimizar
     local floatButton = Instance.new("ImageButton")
     floatButton.Name = "FloatingMinimizeButton"
     floatButton.Size = UDim2.new(0, 40, 0, 40)
     floatButton.Position = UDim2.new(0, 20, 0.5, -20)
-    floatButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    floatButton.BackgroundColor3 = Colors.FloatButtonBackground
     floatButton.Image = "rbxassetid://72671288986713"
     floatButton.Parent = screenGui
 
@@ -182,7 +206,7 @@ function ElixirLib:MakeWindow(config)
     corner.Parent = floatButton
 
     local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(0, 255, 0)
+    stroke.Color = Colors.Border
     stroke.Thickness = 2
     stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     stroke.Parent = floatButton
@@ -190,9 +214,11 @@ function ElixirLib:MakeWindow(config)
     -- Drag do botão flutuante
     local draggingFloat = false
     local dragInputFloat, dragStartFloat, startPosFloat
+
     local function updateFloat(input)
         local delta = input.Position - dragStartFloat
-        floatButton.Position = UDim2.new(startPosFloat.X.Scale, startPosFloat.X.Offset + delta.X, startPosFloat.Y.Scale, startPosFloat.Y.Offset + delta.Y)
+        floatButton.Position = UDim2.new(startPosFloat.X.Scale, startPosFloat.X.Offset + delta.X,
+            startPosFloat.Y.Scale, startPosFloat.Y.Offset + delta.Y)
     end
 
     floatButton.InputBegan:Connect(function(input)
@@ -201,7 +227,9 @@ function ElixirLib:MakeWindow(config)
             dragStartFloat = input.Position
             startPosFloat = floatButton.Position
             input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then draggingFloat = false end
+                if input.UserInputState == Enum.UserInputState.End then
+                    draggingFloat = false
+                end
             end)
         end
     end)
@@ -219,7 +247,44 @@ function ElixirLib:MakeWindow(config)
     end)
 
     floatButton.MouseButton1Click:Connect(toggleUI)
-end
+
+    -- === REDIMENSIONAMENTO DO PAINEL PELO CANTO INFERIOR DIREITO ===
+    local resizeFrame = Instance.new("Frame")
+    resizeFrame.Size = UDim2.new(0, 20, 0, 20)
+    resizeFrame.Position = UDim2.new(1, -20, 1, -20)
+    resizeFrame.AnchorPoint = Vector2.new(1, 1)
+    resizeFrame.BackgroundColor3 = Colors.Border
+    resizeFrame.Parent = mainFrame
+    resizeFrame.ZIndex = 10
+    resizeFrame.Active = true
+
+    local draggingResize = false
+    local dragStartPos
+    local startSize
+
+    resizeFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            draggingResize = true
+            dragStartPos = input.Position
+            startSize = mainFrame.Size
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    draggingResize = false
+                end
+            end)
+        end
+    end)
+
+    resizeFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            if draggingResize then
+                local delta = input.Position - dragStartPos
+                local newWidth = math.clamp(startSize.X.Offset + delta.X, 300, 1200)
+                local newHeight = math.clamp(startSize.Y.Offset + delta.Y, 200, 800)
+                mainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
+            end
+        end
+    end)
 
 
    -- Sistema de Tabs
