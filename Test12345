@@ -10,7 +10,6 @@ local Colors = {
     TitleText = Color3.fromRGB(200, 200, 255),             -- Cor do texto do título
     LeftPanelBackground = Color3.fromRGB(28, 28, 28),      -- Fundo painel esquerdo
     FloatButtonBackground = Color3.fromRGB(20, 20, 20),    -- Fundo botão flutuante
-    --tabs
 }
 
 function ElixirLib:MakeWindow(config)
