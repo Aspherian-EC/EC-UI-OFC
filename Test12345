@@ -1027,6 +1027,7 @@ end
 
 
 
+
     -- === REDIMENSIONAMENTO DO PAINEL PELO CANTO INFERIOR DIREITO ===
     local resizeFrame = Instance.new("Frame")
     resizeFrame.Size = UDim2.new(0, 20, 0, 20)
