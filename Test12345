@@ -11,7 +11,6 @@ local Colors = {
     LeftPanelBackground = Color3.fromRGB(28, 28, 28),      -- Fundo painel esquerdo
     FloatButtonBackground = Color3.fromRGB(20, 20, 20),    -- Fundo botão flutuante
     --tabs
-
 }
 
 function ElixirLib:MakeWindow(config)
@@ -250,20 +249,7 @@ function ElixirLib:MakeWindow(config)
 
     floatButton.MouseButton1Click:Connect(toggleUI)
 
-    -- 🎨 Cores principais do ElixirLib (neon + escuro)
-local Colors = {
-    BackgroundGradientTop = Color3.fromRGB(0, 255, 128),
-    BackgroundGradientBottom = Color3.fromRGB(10, 10, 10),
-
-    ButtonColor = Color3.fromRGB(40, 40, 40),
-    ButtonStroke = Color3.fromRGB(0, 255, 0),
-    TabBackground = Color3.fromRGB(35, 35, 35),
-    SectionBackground = Color3.fromRGB(40, 40, 40),
-    TextColor = Color3.fromRGB(255, 255, 255),
-    TitleColor = Color3.fromRGB(200, 200, 255)
-}
-
--- Sistema de Tabs
+       -- Sistema de Tabs
 local Window = {}
 local Tabs = {}
 local tabContents = {}
@@ -274,11 +260,11 @@ function Window:MakeTab(tabData)
     local tab = {}
     tab.Sections = {}
 
-    -- Botão de tab
+    -- BotÃ£o de tab
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(1, -20, 0, 40)
     button.Position = UDim2.new(0, 10, 0, 10 + (#leftPanel:GetChildren() - 2) * 45)
-    button.BackgroundColor3 = Colors.ButtonColor
+    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     button.Text = ""
     button.AutoButtonColor = true
     button.Parent = leftPanel
@@ -295,7 +281,7 @@ function Window:MakeTab(tabData)
     label.Position = UDim2.new(0, 40, 0, 0)
     label.BackgroundTransparency = 1
     label.Text = tabName
-    label.TextColor3 = Colors.TextColor
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
     label.Font = Enum.Font.GothamBold
     label.TextSize = 18
     label.TextXAlignment = Enum.TextXAlignment.Left
@@ -306,7 +292,7 @@ function Window:MakeTab(tabData)
     btnCorner.Parent = button
 
     local btnStroke = Instance.new("UIStroke")
-    btnStroke.Color = Colors.ButtonStroke
+    btnStroke.Color = Color3.fromRGB(0, 255, 0)
     btnStroke.Thickness = 1
     btnStroke.Parent = button
 
@@ -314,7 +300,7 @@ function Window:MakeTab(tabData)
     local tabContent = Instance.new("Frame")
     tabContent.Size = UDim2.new(1, 0, 1, 0)
     tabContent.BackgroundTransparency = 0
-    tabContent.BackgroundColor3 = Colors.TabBackground
+    tabContent.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     tabContent.Visible = false
     tabContent.Parent = rightPanel
 
@@ -322,19 +308,19 @@ function Window:MakeTab(tabData)
     corner.CornerRadius = UDim.new(0, 12)
     corner.Parent = tabContent
 
-    -- Título da aba
+    -- TÃ­tulo da aba
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, -20, 0, 50)
     title.Position = UDim2.new(0, 10, 0, 10)
     title.BackgroundTransparency = 1
     title.Text = tabName
-    title.TextColor3 = Colors.TitleColor
+    title.TextColor3 = Color3.fromRGB(200, 200, 255)
     title.Font = Enum.Font.GothamBold
     title.TextSize = 24
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = tabContent
 
-    -- Área rolável para os elementos
+    -- Ãrea rolÃ¡vel para os elementos (toggles, etc)
     local scrollContainer = Instance.new("ScrollingFrame")
     scrollContainer.Size = UDim2.new(1, -20, 1, -70)
     scrollContainer.Position = UDim2.new(0, 10, 0, 60)
@@ -363,48 +349,47 @@ function Window:MakeTab(tabData)
 
     table.insert(tabContents, tabContent)
 
-    -- Função para adicionar seções
-    function tab:AddSection(sectionData)
-        local name = sectionData.Name or "Section"
+	--Seções🟢
+   function tab:AddSection(sectionData)
+    local name = sectionData.Name or "Section"
 
-        local sectionFrame = Instance.new("Frame")
-        sectionFrame.Size = UDim2.new(1, 0, 0, 30)
-        sectionFrame.BackgroundColor3 = Colors.SectionBackground
-        sectionFrame.LayoutOrder = #self.Container:GetChildren() + 1
-        sectionFrame.Parent = self.Container
+    local sectionFrame = Instance.new("Frame")
+    sectionFrame.Size = UDim2.new(1, 0, 0, 30)
+    sectionFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    sectionFrame.LayoutOrder = #self.Container:GetChildren() + 1
+    sectionFrame.Parent = self.Container
 
-        local sectionCorner = Instance.new("UICorner")
-        sectionCorner.CornerRadius = UDim.new(0, 6)
-        sectionCorner.Parent = sectionFrame
+    local sectionCorner = Instance.new("UICorner")
+    sectionCorner.CornerRadius = UDim.new(0, 6)
+    sectionCorner.Parent = sectionFrame
 
-        local sectionStroke = Instance.new("UIStroke")
-        sectionStroke.Color = Colors.SectionBackground
-        sectionStroke.Thickness = 1
-        sectionStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-        sectionStroke.Parent = sectionFrame
+    local sectionStroke = Instance.new("UIStroke")
+    sectionStroke.Color = Color3.fromRGB(40, 40, 40)
+    sectionStroke.Thickness = 1
+    sectionStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    sectionStroke.Parent = sectionFrame
 
-        local sectionLabel = Instance.new("TextLabel")
-        sectionLabel.Size = UDim2.new(1, -10, 1, 0)
-        sectionLabel.Position = UDim2.new(0, 5, 0, 0)
-        sectionLabel.BackgroundTransparency = 1
-        sectionLabel.Text = name
-        sectionLabel.TextColor3 = Colors.TextColor
-        sectionLabel.Font = Enum.Font.GothamSemibold
-        sectionLabel.TextSize = 16
-        sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
-        sectionLabel.Parent = sectionFrame
+    local sectionLabel = Instance.new("TextLabel")
+    sectionLabel.Size = UDim2.new(1, -10, 1, 0)
+    sectionLabel.Position = UDim2.new(0, 5, 0, 0)
+    sectionLabel.BackgroundTransparency = 1
+    sectionLabel.Text = name
+    sectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sectionLabel.Font = Enum.Font.GothamSemibold
+    sectionLabel.TextSize = 16
+    sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    sectionLabel.Parent = sectionFrame
 
-        local section = {}
-        section.Tab = self
+    -- Permitir usar Section:AddLabel
+    local section = {}
+    section.Tab = self -- armazena a tab original
 
-        function section:AddLabel(text)
-            return self.Tab:AddLabel(text)
-        end
-
-        return section
+    function section:AddLabel(text)
+        return self.Tab:AddLabel(text)
     end
 
- 
+    return section
+end
 	
 	--label🟢
 	
