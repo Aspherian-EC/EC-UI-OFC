@@ -258,7 +258,17 @@ function ElixirLib:MakeWindow(config)
 
     floatButton.MouseButton1Click:Connect(toggleUI)
 
-
+    local Colors = {
+        GradientTop = Color3.fromRGB(0, 255, 127),
+        GradientBottom = Color3.fromRGB(0, 0, 0),
+        TabButton = Color3.fromRGB(40, 40, 40),
+        TabBorder = Color3.fromRGB(0, 255, 0),
+        TabText = Color3.fromRGB(255, 255, 255),
+        TitleText = Color3.fromRGB(200, 200, 255),
+        SectionBg = Color3.fromRGB(40, 40, 40),
+        SectionText = Color3.fromRGB(255, 255, 255),
+    }
+    
 -- Cores para o degradê
 local gradientTop = Color3.fromRGB(0, 255, 127)
 local gradientBottom = Color3.fromRGB(0, 0, 0)
