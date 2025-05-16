@@ -332,15 +332,25 @@ function Window:MakeTab(tabData)
     title.Parent = tabContent
 
     -- Área rolável para os elementos
-    local scrollContainer = Instance.new("ScrollingFrame")
-    scrollContainer.Size = UDim2.new(1, -20, 1, -70)
-    scrollContainer.Position = UDim2.new(0, 10, 0, 60)
-    scrollContainer.BackgroundTransparency = 1
-    scrollContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
-    scrollContainer.ScrollBarThickness = 4
-    scrollContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
-    scrollContainer.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
-    scrollContainer.Parent = tabContent
+local scrollContainer = Instance.new("ScrollingFrame")
+scrollContainer.Size = UDim2.new(1, -20, 1, -70)
+scrollContainer.Position = UDim2.new(0, 10, 0, 60)
+scrollContainer.BackgroundTransparency = 0 -- agora aparece o degradê
+scrollContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- base escura
+scrollContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollContainer.ScrollBarThickness = 4
+scrollContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scrollContainer.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+scrollContainer.Parent = tabContent
+
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Colors.BackgroundGradientTop),
+    ColorSequenceKeypoint.new(1, Colors.BackgroundGradientBottom)
+})
+gradient.Rotation = 90
+gradient.Parent = scrollContainer
+
 
     local listLayout = Instance.new("UIListLayout")
     listLayout.Padding = UDim.new(0, 10)
