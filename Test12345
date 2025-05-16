@@ -248,43 +248,7 @@ function ElixirLib:MakeWindow(config)
 
     floatButton.MouseButton1Click:Connect(toggleUI)
 
-    -- === REDIMENSIONAMENTO DO PAINEL PELO CANTO INFERIOR DIREITO ===
-    local resizeFrame = Instance.new("Frame")
-    resizeFrame.Size = UDim2.new(0, 20, 0, 20)
-    resizeFrame.Position = UDim2.new(1, -20, 1, -20)
-    resizeFrame.AnchorPoint = Vector2.new(1, 1)
-    resizeFrame.BackgroundColor3 = Colors.Border
-    resizeFrame.Parent = mainFrame
-    resizeFrame.ZIndex = 10
-    resizeFrame.Active = true
-
-    local draggingResize = false
-    local dragStartPos
-    local startSize
-
-    resizeFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            draggingResize = true
-            dragStartPos = input.Position
-            startSize = mainFrame.Size
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    draggingResize = false
-                end
-            end)
-        end
-    end)
-
-    resizeFrame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            if draggingResize then
-                local delta = input.Position - dragStartPos
-                local newWidth = math.clamp(startSize.X.Offset + delta.X, 300, 1200)
-                local newHeight = math.clamp(startSize.Y.Offset + delta.Y, 200, 800)
-                mainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
-            end
-        end
-    end)
+   
 
 
    -- Sistema de Tabs
@@ -1057,6 +1021,44 @@ end)
         end
     end)
 
+     -- === REDIMENSIONAMENTO DO PAINEL PELO CANTO INFERIOR DIREITO ===
+     local resizeFrame = Instance.new("Frame")
+     resizeFrame.Size = UDim2.new(0, 20, 0, 20)
+     resizeFrame.Position = UDim2.new(1, -20, 1, -20)
+     resizeFrame.AnchorPoint = Vector2.new(1, 1)
+     resizeFrame.BackgroundColor3 = Colors.Border
+     resizeFrame.Parent = mainFrame
+     resizeFrame.ZIndex = 10
+     resizeFrame.Active = true
+ 
+     local draggingResize = false
+     local dragStartPos
+     local startSize
+ 
+     resizeFrame.InputBegan:Connect(function(input)
+         if input.UserInputType == Enum.UserInputType.MouseButton1 then
+             draggingResize = true
+             dragStartPos = input.Position
+             startSize = mainFrame.Size
+             input.Changed:Connect(function()
+                 if input.UserInputState == Enum.UserInputState.End then
+                     draggingResize = false
+                 end
+             end)
+         end
+     end)
+ 
+     resizeFrame.InputChanged:Connect(function(input)
+         if input.UserInputType == Enum.UserInputType.MouseMovement then
+             if draggingResize then
+                 local delta = input.Position - dragStartPos
+                 local newWidth = math.clamp(startSize.X.Offset + delta.X, 300, 1200)
+                 local newHeight = math.clamp(startSize.Y.Offset + delta.Y, 200, 800)
+                 mainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
+             end
+         end
+     end)
+     
     return textboxContainer
 end
 
@@ -1066,7 +1068,6 @@ end
 
 
 
-  
     return Window
 end
 
